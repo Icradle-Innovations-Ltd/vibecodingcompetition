@@ -6,21 +6,21 @@
  * 2. On each user message, compute similarity to find the most relevant chunks.
  * 3. Pass retrieved context + conversation history to Gemini via LangChain LCEL chain.
  */
-import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { StringOutputParser } from "@langchain/core/output_parsers";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { brandDocuments, systemPrompt } from "./brandKnowledge";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-// ── Initialize LLM ──
-const llm = new ChatGoogleGenerativeAI({
+// ── Initialize Native Gemini Client ──
+const genAI = new GoogleGenerativeAI(apiKey || "MOCK_KEY");
+const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
-    apiKey: apiKey || "MOCK_KEY",
-    maxOutputTokens: 300,
-    temperature: 0.7,
-    baseUrl: "https://generativelanguage.googleapis.com/v1", // Escape hatch for v1
+    systemInstruction: systemPrompt,
+    generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 300,
+    }
 });
 
 // ── Initialize Embeddings ──
@@ -89,13 +89,6 @@ async function similaritySearch(query: string, k: number = 3): Promise<EmbeddedD
     return scored.slice(0, k).map(s => s.doc);
 }
 
-// ── Build LCEL prompt template ──
-const promptTemplate = ChatPromptTemplate.fromMessages([
-    ["system", systemPrompt + "\n\n---\nRetrieved Context:\n{context}\n---"],
-    new MessagesPlaceholder("history"),
-    ["human", "{question}"],
-]);
-
 // ── Main chat function ──
 export async function getChatResponse(
     history: { role: string; content: string }[],
@@ -123,24 +116,31 @@ export async function getChatResponse(
             relevantDocs.map(d => d.metadata.topic)
         );
 
-        // 2. Convert chat history to LangChain message format
-        const langchainHistory = history.map(msg =>
-            msg.role === "assistant"
-                ? new AIMessage(msg.content)
-                : new HumanMessage(msg.content)
-        );
+        // 2. Format history for Google AI SDK
+        const formattedHistory = history.map(msg => ({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+        }));
 
-        // 3. Build the LCEL chain: prompt → LLM → parse
-        const chain = promptTemplate.pipe(llm).pipe(new StringOutputParser());
+        // 3. Prepare the final prompt with context
+        const promptWithContext = `
+Retrieved Context from Odd Shoes Knowledge Base:
+${context}
 
-        // 4. Invoke the chain with context, history, and question
-        const response = await chain.invoke({
-            context,
-            history: langchainHistory,
-            question: newMessage,
+---
+User Question:
+${newMessage}
+`;
+
+        // 4. Start chat and send message using native SDK
+        const chat = model.startChat({
+            history: formattedHistory,
         });
 
-        return response;
+        const result = await chat.sendMessage(promptWithContext);
+        const response = result.response.text();
+
+        return response || "I'm sorry, I couldn't generate a response.";
     } catch (error) {
         console.error("[RAG] Error:", error);
         return "I'm sorry, I'm having trouble connecting right now. You can reach us directly at buildit@oddshoes.dev or WhatsApp +31 97 010 209 759.";
