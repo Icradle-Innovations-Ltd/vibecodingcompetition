@@ -15,7 +15,7 @@ const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 // ── Initialize Native Gemini Client ──
 const genAI = new GoogleGenerativeAI(apiKey || "MOCK_KEY");
 const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash-lite-001",
     systemInstruction: systemPrompt,
     generationConfig: {
         temperature: 0.7,
