@@ -111,101 +111,94 @@ export default function ChatBot() {
                 {messages.map((msg) => (
                     <div
                         key={msg.id}
-                        className={\`flex gap-3 \${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}\`}
-          >
-                <div className={\`w-8 h-8 rounded-full flex items-center justify-center shrink-0 \${
-                    msg.role === 'user' ? 'bg-primary' : 'bg-muted'
-                }\`}>
-                {msg.role === 'user' ? (
-                    <User className="w-4 h-4 text-primary-foreground" />
-                ) : (
-                    <Bot className="w-4 h-4 text-foreground" />
+                        className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+                    >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-primary' : 'bg-muted'
+                            }`}>
+                            {msg.role === 'user' ? (
+                                <User className="w-4 h-4 text-primary-foreground" />
+                            ) : (
+                                <Bot className="w-4 h-4 text-foreground" />
+                            )}
+                        </div>
+                        <div className={`max-w-[80%] rounded-2xl p-4 ${msg.role === 'user'
+                                ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                                : 'bg-muted text-foreground rounded-tl-sm'
+                            }`}>
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                        </div>
+                    </div>
+                ))}
+
+                {isLoading && (
+                    <div className="flex gap-3 flex-row">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                            <Bot className="w-4 h-4 text-foreground" />
+                        </div>
+                        <div className="bg-muted rounded-2xl rounded-tl-sm p-4 w-16 flex items-center justify-center space-x-1">
+                            <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                    </div>
                 )}
+                <div ref={messagesEndRef} />
             </div>
-            <div className={\`max-w-[80%] rounded-2xl p-4 \${
-                msg.role === 'user'
-                    ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                    : 'bg-muted text-foreground rounded-tl-sm'
-            }\`}>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-        </div>
-          </div >
-        ))
-}
 
-{
-    isLoading && (
-        <div className="flex gap-3 flex-row">
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4 text-foreground" />
-            </div>
-            <div className="bg-muted rounded-2xl rounded-tl-sm p-4 w-16 flex items-center justify-center space-x-1">
-                <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-            </div>
-        </div>
-    )
-}
-<div ref={messagesEndRef} />
-      </div >
-
-    {/* Email Capture Slide-up */ }
-{
-    showEmailCapture && (
-        <div className="bg-primary/10 border-t border-primary/20 p-4 animate-in slide-in-from-bottom-5">
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-                <div className="flex-1 text-sm">
-                    <span className="font-semibold text-primary">Stay in the loop.</span> Subscribe to get updates on how we are building Kingdom impact.
+            {/* Email Capture Slide-up */}
+            {showEmailCapture && (
+                <div className="bg-primary/10 border-t border-primary/20 p-4 animate-in slide-in-from-bottom-5">
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                        <div className="flex-1 text-sm">
+                            <span className="font-semibold text-primary">Stay in the loop.</span> Subscribe to get updates on how we are building Kingdom impact.
+                        </div>
+                        <form
+                            className="flex w-full sm:w-auto gap-2"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                setShowEmailCapture(false);
+                                // Bonus point: actual logic to save email would go here
+                            }}
+                        >
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                required
+                                className="px-3 py-1.5 min-w-[200px] text-sm rounded-md bg-background border border-muted focus:outline-none focus:ring-2 focus:ring-primary/50"
+                            />
+                            <button type="submit" className="px-3 py-1.5 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors">
+                                Subscribe
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <form
-                    className="flex w-full sm:w-auto gap-2"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        setShowEmailCapture(false);
-                        // Bonus point: actual logic to save email would go here
-                    }}
-                >
+            )}
+
+            {/* Input Area */}
+            <div className="p-4 border-t border-muted bg-card">
+                <form onSubmit={handleSubmit} className="relative flex items-center">
                     <input
-                        type="email"
-                        placeholder="Enter your email"
-                        required
-                        className="px-3 py-1.5 min-w-[200px] text-sm rounded-md bg-background border border-muted focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Ask me about MVP development, pricing, or our mission..."
+                        className="w-full bg-muted border-none rounded-full pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
+                        disabled={isLoading}
                     />
-                    <button type="submit" className="px-3 py-1.5 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors">
-                        Subscribe
+                    <button
+                        type="submit"
+                        disabled={!input.trim() || isLoading}
+                        className="absolute right-1 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                    >
+                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     </button>
                 </form>
+                <div className="text-center mt-3">
+                    <p className="text-[10px] text-muted-foreground">
+                        Odd Shoes AI can make mistakes. Always verify critical information.
+                    </p>
+                </div>
             </div>
         </div>
-    )
-}
-
-{/* Input Area */ }
-<div className="p-4 border-t border-muted bg-card">
-    <form onSubmit={handleSubmit} className="relative flex items-center">
-        <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me about MVP development, pricing, or our mission..."
-            className="w-full bg-muted border-none rounded-full pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
-            disabled={isLoading}
-        />
-        <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className="absolute right-1 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
-        >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-        </button>
-    </form>
-    <div className="text-center mt-3">
-        <p className="text-[10px] text-muted-foreground">
-            Odd Shoes AI can make mistakes. Always verify critical information.
-        </p>
-    </div>
-</div>
-    </div >
-  );
+    );
 }
