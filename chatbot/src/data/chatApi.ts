@@ -117,15 +117,19 @@ export async function getChatResponse(
         );
 
         // 2. Format history for Google AI SDK
-        const formattedHistory = history.map(msg => ({
-            role: msg.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: msg.content }]
-        }));
+        // We inject the previous interaction into the prompt instead of startChat history constraints.
+        const stringifiedHistory = history.map(msg =>
+            `${msg.role === 'assistant' ? 'Odd Shoes Agent' : 'User'}: ${msg.content}`
+        ).join('\n\n');
 
-        // 3. Prepare the final prompt with context
+        // 3. Prepare the final prompt with context and history
         const promptWithContext = `
 Retrieved Context from Odd Shoes Knowledge Base:
 ${context}
+
+---
+Recent Conversation History:
+${stringifiedHistory || 'No previous history.'}
 
 ---
 User Question:
@@ -134,7 +138,7 @@ ${newMessage}
 
         // 4. Start chat and send message using native SDK
         const chat = model.startChat({
-            history: formattedHistory,
+            history: [], // Keep history empty to avoid strict role ordering bugs, we pass it in prompt
         });
 
         const result = await chat.sendMessage(promptWithContext);
