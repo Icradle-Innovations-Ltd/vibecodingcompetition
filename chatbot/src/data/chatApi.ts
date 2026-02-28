@@ -16,10 +16,11 @@ const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
 // ── Initialize LLM ──
 const llm = new ChatGoogleGenerativeAI({
-    model: "gemini-2.0-flash",
+    model: "gemini-1.5-flash",
     apiKey: apiKey || "MOCK_KEY",
     maxOutputTokens: 300,
     temperature: 0.7,
+    maxRetries: 2,
 });
 
 // ── Initialize Embeddings ──
@@ -36,6 +37,7 @@ interface EmbeddedDoc {
 }
 
 let embeddedDocs: EmbeddedDoc[] | null = null;
+let initializationPromise: Promise<EmbeddedDoc[]> | null = null;
 
 function cosineSimilarity(a: number[], b: number[]): number {
     let dot = 0, normA = 0, normB = 0;
@@ -49,19 +51,29 @@ function cosineSimilarity(a: number[], b: number[]): number {
 
 async function initializeVectorStore(): Promise<EmbeddedDoc[]> {
     if (embeddedDocs) return embeddedDocs;
+    if (initializationPromise) return initializationPromise;
 
-    console.log("[RAG] Embedding brand knowledge...");
-    const texts = brandDocuments.map(d => d.content);
-    const vectors = await embeddings.embedDocuments(texts);
+    initializationPromise = (async () => {
+        try {
+            console.log("[RAG] Embedding brand knowledge...");
+            const texts = brandDocuments.map(d => d.content);
+            const vectors = await embeddings.embedDocuments(texts);
 
-    embeddedDocs = brandDocuments.map((doc, i) => ({
-        content: doc.content,
-        metadata: doc.metadata,
-        embedding: vectors[i],
-    }));
+            embeddedDocs = brandDocuments.map((doc, i) => ({
+                content: doc.content,
+                metadata: doc.metadata,
+                embedding: vectors[i],
+            }));
 
-    console.log(`[RAG] Vector store initialized with ${embeddedDocs.length} documents.`);
-    return embeddedDocs;
+            console.log(`[RAG] Vector store initialized with ${embeddedDocs.length} documents.`);
+            return embeddedDocs;
+        } catch (error) {
+            initializationPromise = null;
+            throw error;
+        }
+    })();
+
+    return initializationPromise;
 }
 
 async function similaritySearch(query: string, k: number = 3): Promise<EmbeddedDoc[]> {
