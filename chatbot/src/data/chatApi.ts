@@ -20,13 +20,14 @@ const llm = new ChatGoogleGenerativeAI({
     apiKey: apiKey || "MOCK_KEY",
     maxOutputTokens: 300,
     temperature: 0.7,
-    maxRetries: 2,
+    apiVersion: "v1", // Force v1 API since v1beta is deprecating these models
 });
 
 // ── Initialize Embeddings ──
 const embeddings = new GoogleGenerativeAIEmbeddings({
     model: "gemini-embedding-001",
     apiKey: apiKey || "MOCK_KEY",
+    apiVersion: "v1", // Force v1 for embeddings too
 });
 
 // ── Custom In-Memory Vector Store ──
