@@ -24,7 +24,7 @@ const llm = new ChatGoogleGenerativeAI({
 
 // ── Initialize Embeddings ──
 const embeddings = new GoogleGenerativeAIEmbeddings({
-    model: "embedding-001",
+    model: "gemini-embedding-001",
     apiKey: apiKey || "MOCK_KEY",
 });
 
