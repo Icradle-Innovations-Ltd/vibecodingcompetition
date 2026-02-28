@@ -9,6 +9,7 @@
 
 - [Pre-Competition Checklist](#-pre-competition-checklist)
 - [Speed Stack](#-speed-stack)
+- [🔐 Neon Auth Quickstart](#-neon-auth-quickstart-copy-paste-ready)
 - [Pre-Built Templates Ready](#-pre-built-templates-ready)
 - [40-Minute Execution Timeline](#-40-minute-execution-timeline)
 - [Deployment Strategy](#-deployment-strategy)
@@ -65,6 +66,170 @@
 | **AI Coding** | Cursor / Copilot / Gemini | Vibe code at max speed |
 
 > ⚠️ **DO NOT** use complex multi-service setups (MongoDB + Redis + R2 + Railway). There's no time. Keep it simple: **Next.js + Neon + Vercel**.
+
+---
+
+## 🔐 Neon Auth Quickstart (Copy-Paste Ready)
+
+> Your Neon Auth is already configured. These are the exact code snippets to drop in on competition day.
+
+### Step 1 — Install the SDK
+
+```bash
+npm install @neondatabase/neon-js@latest react-router-dom
+```
+
+### Step 2 — Environment Variable
+
+Already in your `.env`:
+
+```env
+VITE_NEON_AUTH_URL=https://ep-steep-cherry-ai289h4e.neonauth.c-4.us-east-1.aws.neon.tech/neondb/auth
+```
+
+### Step 3 — Initialize the Auth Client
+
+Create `src/lib/auth.ts`:
+
+```ts
+import { createAuthClient } from "@neondatabase/neon-js/auth";
+
+export const authClient = createAuthClient({
+  baseURL: import.meta.env.VITE_NEON_AUTH_URL,
+});
+```
+
+### Step 4 — Wrap Your App with the Auth Provider
+
+Update `src/main.tsx`:
+
+```tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import "@neondatabase/neon-js/ui/css";
+import "./index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+```
+
+Update `src/App.tsx`:
+
+```tsx
+import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
+import { useNavigate, Link, Routes, Route } from "react-router-dom";
+import { authClient } from "./lib/auth";
+import Home from "./pages/home";
+import AuthPage from "./pages/auth";
+import AccountPage from "./pages/account";
+
+function App() {
+  const navigate = useNavigate();
+
+  return (
+    <NeonAuthUIProvider
+      authClient={authClient}
+      navigate={navigate}
+      Link={Link}
+      social={{ providers: ["google"] }}
+    >
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/account" element={<AccountPage />} />
+      </Routes>
+    </NeonAuthUIProvider>
+  );
+}
+
+export default App;
+```
+
+### Step 5 — Create Auth Pages
+
+**`src/pages/home.tsx`** — Landing page with sign-in/out state:
+
+```tsx
+import { SignedIn, SignedOut, UserButton } from "@neondatabase/neon-js/auth/react/ui";
+import { Link } from "react-router-dom";
+
+export default function Home() {
+  return (
+    <div>
+      <SignedIn>
+        <h1>Welcome back!</h1>
+        <UserButton />
+        <Link to="/account">Account Settings</Link>
+      </SignedIn>
+      <SignedOut>
+        <h1>Welcome</h1>
+        <Link to="/auth">Sign In</Link>
+      </SignedOut>
+    </div>
+  );
+}
+```
+
+**`src/pages/auth.tsx`** — Sign in / Sign up page:
+
+```tsx
+import { AuthView } from "@neondatabase/neon-js/auth/react/ui";
+
+export default function AuthPage() {
+  return <AuthView pathname="sign-in" />;
+}
+```
+
+**`src/pages/account.tsx`** — Account management:
+
+```tsx
+import { SignedIn, SignedOut, RedirectToSignIn } from "@neondatabase/neon-js/auth/react/ui";
+
+export default function AccountPage() {
+  return (
+    <>
+      <SignedIn>
+        <h1>Account Settings</h1>
+        {/* Account management UI */}
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
+}
+```
+
+### Available Auth Components (Cheat Sheet)
+
+| Component | Purpose |
+|-----------|---------|
+| `<AuthView pathname="sign-in" />` | Full sign-in/sign-up form with OAuth |
+| `<SignInForm />` | Standalone sign-in form |
+| `<SignUpForm />` | Standalone sign-up form |
+| `<ForgotPasswordForm />` | Password reset request |
+| `<UserButton />` | User avatar dropdown with menu |
+| `<UserAvatar />` | Just the avatar image |
+| `<SignedIn>` | Render children only when logged in |
+| `<SignedOut>` | Render children only when logged out |
+| `<RedirectToSignIn />` | Auto-redirect to sign-in page |
+
+### Get Current User (in any component)
+
+```ts
+import { authClient } from "./lib/auth";
+
+// Get the current session
+const session = await authClient.getSession();
+const user = session?.user;
+```
 
 ---
 
