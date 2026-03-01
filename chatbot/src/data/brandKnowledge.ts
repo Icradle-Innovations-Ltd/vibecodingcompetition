@@ -65,6 +65,22 @@ export const brandDocuments = [
       metadata: { source: "website", topic: "oddshoes_website_tech_stack" }
    },
 
+   // ── THIS REPOSITORY CHATBOT ARCHITECTURE ──
+   {
+      content: `If someone asks about this specific chatbot or the Odd Shoes AI Agent GitHub repository/project: We built a highly responsive, brand-aligned AI Sales and Marketing Agent embedded directly into the "Odd Shoes" studio website. The Agent replaces static FAQs by allowing founders to chat directly about our team, services (Genesis Build, Kingdom Builder), and values. It acts as an interactive sales funnel that gracefully leads users to book a discovery call or launch a project planner.`,
+      metadata: { source: "readme", topic: "chatbot_repo_project_purpose" }
+   },
+   {
+      content: `If someone asks how THIS specific Odd Shoes AI Agent (the chatbot) was built technically: 
+      - Frontend: React 19, Vite, Tailwind CSS, clsx, and Lucide React. It uses Odd Shoes brand colors (off-white, terracotta/coral, deep slate).
+      - AI & RAG: It uses Google Gemini API (gemini-2.0-flash / gemini-2.0-flash-lite) for reasoning.
+      - LangChain (@langchain/google-genai) generates vector embeddings (gemini-embedding-001) for the brand knowledge base.
+      - Vector Store: We use a custom in-memory client-side vector database utilizing Cosine Similarity. When asked a question, it finds the most similar brand documents and injects them into the Gemini prompt (RAG).
+      - Language: TypeScript and Node.js.
+      - Setup: Run 'npm install', add a '.env' file with VITE_GEMINI_API_KEY and VITE_GROQ_API_KEY, and start the app with 'npm run dev' on localhost:5173.`,
+      metadata: { source: "readme", topic: "chatbot_repo_tech_stack_installation" }
+   },
+
    // ── GIVE HIM 50 ──
    {
       content: `Give Him 50 — 50% of every dollar Odd Shoes earns goes directly to Kingdom work. This is the engine of everything we do. It supports four pillars: 1) Church Planting (Uganda, Kenya, Rwanda). 2) Missions Support (5 missionaries in East Africa/Middle East). 3) Child Sponsorship (120+ children). 4) Clean Water (boreholes for 500+ people). Also supports Bibles in local languages and Tech Scholarships for young believers. Full transparency provided.`,
