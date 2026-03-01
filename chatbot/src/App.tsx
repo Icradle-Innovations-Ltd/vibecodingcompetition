@@ -95,8 +95,8 @@ function App() {
       </div>
 
       {/* Right Column: Chatbot Container */}
-      <div className="w-full lg:w-[55%] p-4 sm:p-6 lg:p-8 flex items-center justify-center relative z-10 flex-1">
-        <div className="w-full max-w-xl h-[550px] sm:h-[600px] lg:h-[780px] max-h-[85vh] lg:max-h-none slide-up">
+      <div className="w-full lg:w-[55%] p-4 sm:p-6 lg:p-4 flex items-center justify-center relative z-10 flex-1">
+        <div className="w-full max-w-xl h-[550px] sm:h-[600px] lg:h-[700px] max-h-[85vh] lg:max-h-[90vh] slide-up">
           <ChatBot />
         </div>
       </div>
