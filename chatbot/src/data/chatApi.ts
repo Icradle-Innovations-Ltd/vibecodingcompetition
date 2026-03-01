@@ -7,26 +7,22 @@
  * 3. Pass retrieved context + conversation history to Gemini via LangChain LCEL chain.
  */
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { brandDocuments, systemPrompt } from "./brandKnowledge";
+import { createGroq } from '@ai-sdk/groq';
+import { generateText } from 'ai';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
 
-// ── Initialize Native Gemini Client ──
-const genAI = new GoogleGenerativeAI(apiKey || "MOCK_KEY");
-const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-lite-001",
-    systemInstruction: systemPrompt,
-    generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 300,
-    }
+// ── Initialize Groq Client ──
+const groq = createGroq({
+    apiKey: groqApiKey,
 });
 
 // ── Initialize Embeddings ──
 const embeddings = new GoogleGenerativeAIEmbeddings({
     model: "gemini-embedding-001",
-    apiKey: apiKey || "MOCK_KEY",
+    apiKey: geminiApiKey || "MOCK_KEY",
 });
 
 // ── Custom In-Memory Vector Store ──
@@ -94,12 +90,12 @@ export async function getChatResponse(
     history: { role: string; content: string }[],
     newMessage: string
 ): Promise<string> {
-    if (!apiKey) {
+    if (!groqApiKey) {
         return new Promise((resolve) =>
             setTimeout(
                 () =>
                     resolve(
-                        "I'm the Odd Shoes AI agent running in demo mode. Add your `VITE_GEMINI_API_KEY` to `.env` to unlock real AI responses powered by LangChain RAG! Ask me about our Genesis Build (5-day MVP), Kingdom Builder, or Give Him 50 mission."
+                        "I'm the Odd Shoes AI agent running in demo mode. Add your `VITE_GROQ_API_KEY` to `.env` to unlock real AI responses powered by LangChain RAG! Ask me about our Genesis Build (5-day MVP), Kingdom Builder, or Give Him 50 mission."
                     ),
                 800
             )
@@ -136,15 +132,15 @@ User Question:
 ${newMessage}
 `;
 
-        // 4. Start chat and send message using native SDK
-        const chat = model.startChat({
-            history: [], // Keep history empty to avoid strict role ordering bugs, we pass it in prompt
+        // 4. Send message using AI SDK with Groq
+        const { text } = await generateText({
+            model: groq('llama-3.3-70b-versatile'),
+            system: systemPrompt,
+            prompt: promptWithContext,
+            temperature: 0.7,
         });
 
-        const result = await chat.sendMessage(promptWithContext);
-        const response = result.response.text();
-
-        return response || "I'm sorry, I couldn't generate a response.";
+        return text || "I'm sorry, I couldn't generate a response.";
     } catch (error) {
         console.error("[RAG] Error:", error);
         return "I'm sorry, I'm having trouble connecting right now. You can reach us directly at buildit@oddshoes.dev or WhatsApp +31 97 010 209 759.";
