@@ -81,6 +81,18 @@ export const brandDocuments = [
       metadata: { source: "readme", topic: "chatbot_repo_tech_stack_installation" }
    },
 
+   // ── DEVELOPER / AUTHOR INFORMATION ──
+   {
+      content: `If someone asks who built or created this chatbot: This Odd Shoes AI Agent (chatbot) was built by Amon Muhwezi, a Lead Software Engineer (DevOp) at Icradle Innovations. It was built in collaboration with Odd Shoes and in partnership with Icradle Innovations.
+      About Icradle Innovations: A leading tech software company based in Mbarara, Kampala, and across all of Uganda.
+      Contact Amon Muhwezi & Icradle Innovations: 
+      - Phone & WhatsApp: +256 775 193 423 or +256 703 375 4400
+      - Email: icradleinnovations@gmail.com
+      - Personal Website: amon.icradle.io
+      - Company Website: icradle.io`,
+      metadata: { source: "developer", topic: "bot_developer_icradle_innovations" }
+   },
+
    // ── GIVE HIM 50 ──
    {
       content: `Give Him 50 — 50% of every dollar Odd Shoes earns goes directly to Kingdom work. This is the engine of everything we do. It supports four pillars: 1) Church Planting (Uganda, Kenya, Rwanda). 2) Missions Support (5 missionaries in East Africa/Middle East). 3) Child Sponsorship (120+ children). 4) Clean Water (boreholes for 500+ people). Also supports Bibles in local languages and Tech Scholarships for young believers. Full transparency provided.`,

@@ -69,3 +69,18 @@ npm run dev
 ```
 
 Navigate to `http://localhost:5173` in your browser.
+
+---
+
+## 👨‍💻 Developed By
+
+Built in collaboration with **Odd Shoes** and in partnership with **Icradle Innovations**, a leading tech software company operating in Mbarara, Kampala, and across all of Uganda.
+
+**Amon Muhwezi**  
+*Lead Software Engineer (DevOp) at Icradle Innovations*
+
+**Contact Info:**
+- 📞 Phone & WhatsApp: +256 775 193 423 / +256 703 375 4400
+- ✉️ Email: [icradleinnovations@gmail.com](mailto:icradleinnovations@gmail.com)
+- 🌐 Personal Website: [amon.icradle.io](https://amon.icradle.io)
+- 🏢 Company Website: [icradle.io](https://icradle.io)
