@@ -20,7 +20,7 @@ export default function ChatBot() {
         {
             id: '1',
             role: 'assistant',
-            content: "Hey there! 👋 I'm the Odd Shoes AI assistant. We build tech products for Christian founders to accelerate Kingdom impact.\n\nHow can I help you today? Are you looking to launch an MVP or scale an existing product?"
+            content: "Hey there! 👋 I'm Genesis Bot, the AI assistant for Odd Shoes. We build tech products for Christian founders to accelerate Kingdom impact.\n\nHow can I help you today? Are you looking to launch an MVP or scale an existing product?"
         }
     ]);
     const [input, setInput] = useState('');
@@ -83,10 +83,10 @@ export default function ChatBot() {
                         <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" />
                     </div>
                     <div>
-                        <h2 className="font-semibold text-brand-dark text-sm">Odd Shoes Agent</h2>
+                        <h2 className="font-semibold text-brand-dark text-sm">Genesis Bot</h2>
                         <div className="flex items-center gap-1.5">
                             <Sparkles className="w-3 h-3 text-brand-coral" />
-                            <p className="text-[11px] text-brand-gray">Powered by LangChain RAG</p>
+                            <p className="text-[11px] text-brand-gray">Powered by Groq Llama-3.3</p>
                         </div>
                     </div>
                 </div>
@@ -133,8 +133,8 @@ export default function ChatBot() {
                         style={{ animationDelay: `${index * 50}ms` }}
                     >
                         <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-1 ${msg.role === 'user'
-                                ? 'bg-brand-coral'
-                                : 'bg-brand-gray-light border border-black/5'
+                            ? 'bg-brand-coral'
+                            : 'bg-brand-gray-light border border-black/5'
                             }`}>
                             {msg.role === 'user' ? (
                                 <User className="w-3.5 h-3.5 text-white" />
@@ -143,8 +143,8 @@ export default function ChatBot() {
                             )}
                         </div>
                         <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.role === 'user'
-                                ? 'bg-brand-coral text-white rounded-tr-md shadow-md shadow-brand-coral/15'
-                                : 'bg-white text-brand-dark rounded-tl-md shadow-sm border border-black/5'
+                            ? 'bg-brand-coral text-white rounded-tr-md shadow-md shadow-brand-coral/15'
+                            : 'bg-white text-brand-dark rounded-tl-md shadow-sm border border-black/5'
                             }`}>
                             <p className="text-[13px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                         </div>
@@ -242,7 +242,7 @@ export default function ChatBot() {
                     </button>
                 </form>
                 <p className="text-center text-[10px] text-brand-gray/50 mt-2.5">
-                    Powered by LangChain RAG · Google Gemini · Odd Shoes © 2026
+                    Powered by Groq · Llama 3.3 · Odd Shoes © 2026
                 </p>
             </div>
         </div>
